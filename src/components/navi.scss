@@ -1,0 +1,44 @@
+
+.navigation-bar {
+  transform: scale(2);
+    position: fixed;
+    top: 25px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #d68189;
+
+  .logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: auto;
+    margin-right: 50px;
+
+    img {
+      max-width: 50%;
+      height: auto;
+    }
+  }
+
+  .navigation-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+
+    li {
+      margin: 0 10px;
+    }
+
+    a {
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+  }
+}

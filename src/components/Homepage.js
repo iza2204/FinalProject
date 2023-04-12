@@ -10,6 +10,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LogoutIcon from '@mui/icons-material/Logout';
 import CheckIcon from '@mui/icons-material/Check';
+import NavigationBar from "./Navi";
 
 export default function Homepage() {
     const [todo, setTodo] = useState("");
@@ -82,6 +83,7 @@ export default function Homepage() {
 
     return (
         <div className="homepage">
+            <NavigationBar/>
             <input
                 className="add-edit-input"
                 type="text"

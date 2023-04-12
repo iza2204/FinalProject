@@ -1,7 +1,7 @@
 .homepage {
   height: 100vh;
   weight: 100vw;
-  background: linear-gradient(122.19deg, #da2079 1.89%, #2a00d5 113.56%);
+  background: linear-gradient(122.19deg, #c6a49a 1.89%, #c6e5d9 113.56%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -10,20 +10,23 @@
 }
 
 .add-edit-input {
+  display:flex;
   position: absolute;
-  top: 20px;
+  top: 200px;
   outline: none;
   border: none;
   height: 30px;
   font-size: 25px;
   padding: 5px 20px;
+  width: 250px;
+
 }
 
 .add-confirm-icon {
   position: absolute;
   transform: scale(2);
-  top: 27px;
-  right: 750px;
+  top: 205px;
+  right: 1250px;
   cursor: pointer;
 }
 
@@ -50,9 +53,10 @@
 .logout-icon {
   cursor: pointer;
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top:3px;
+  right: 1px;
   padding: 20px;
-  background: red;
+  background: #e94e77;
   color: white;
+
 }

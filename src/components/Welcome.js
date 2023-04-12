@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import "./welcome.scss";
 // import TodoSVG from '../assets/todo-svg.svg'
 import "../assets/pexels-ron-lach-7955158-4096x2160-25fps.mp4"
+import NavigationBar from "./Navi";
 
 export default function Welcome() {
     const [email, setEmail] = useState("");
@@ -70,6 +71,7 @@ export default function Welcome() {
 
     return (
         <div className="welcome">
+            <NavigationBar/>
             {/*<img src={TodoSVG} className="todo-svg" />*/}
             <h1>Time Wizard</h1>
             <div className="login-register-container">
