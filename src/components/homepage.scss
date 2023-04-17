@@ -1,12 +1,18 @@
 .homepage {
   height: 100vh;
-  weight: 100vw;
   background: linear-gradient(122.19deg, #c6a49a 1.89%, #c6e5d9 113.56%);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   position: relative;
+  flex-wrap: nowrap;
+}
+
+.div-of-lists{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
 }
 
 .add-edit-input {
