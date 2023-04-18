@@ -1,6 +1,6 @@
-
 .navigation-bar {
   transform: scale(2);
+  height: 50px;
     position: fixed;
     top: 25px;
     left: 0;
@@ -19,19 +19,21 @@
     margin-right: 50px;
 
     img {
-      max-width: 50%;
-      height: auto;
+      //max-width: 50px;
+      margin: 50px 0;
+      height: 100px;
+
     }
   }
 
   .navigation-links {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     list-style: none;
 
     li {
-      margin: 0 10px;
+      margin: 0 40px;
     }
 
     a {
