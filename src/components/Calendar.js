@@ -43,6 +43,7 @@ function Calendarsheet() {
     // State for text above calander
     const [calendarText, setCalendarText] = useState(`No Date is selected`);
 
+
     // Function to update selected date and calander text
     const handleDateChange = (value) => {
         setSelectedDate(value);
@@ -64,16 +65,35 @@ function Calendarsheet() {
     return (
         <div>
             <NavigationBar />
-            <div className="app">
-                <h2 className="calander-details">{calendarText}</h2>
+            <div className="app-calendar">
+                <h2 className="calendar-details">{calendarText}
+                    <div>
+                        Informacje o ilosci zadan
+                        <li>
+
+                        </li>
+                        <li>
+
+                        </li><li>
+
+                    </li><li>
+
+                    </li>
+
+
+
+                    </div>
+                </h2>
+
                 <Calendar
                     onClickMonth={handleMonthChange}
                     onClickYear={handleYearChange}
                     onChange={handleDateChange}
                     value={selectedDate}
                 />
-                <LogoutIcon onClick={handleSignOut} className="logout-icon" />
+
             </div>
+            <LogoutIcon onClick={handleSignOut} className="logout-icon" />
         </div>
     );
 }

@@ -10,11 +10,19 @@
   flex-wrap: nowrap;
 }
 
-.div-of-lists{
+.all-lists{
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
+  width:40vw;
+  padding:100px;
 }
+
+//.div-of-lists{
+//  display: flex;
+//  flex-direction: column;
+//  justify-content: center;
+//}
 
 .add-edit-input {
   display:flex;
@@ -66,4 +74,18 @@
   background: #e94e77;
   color: white;
 
+}
+
+.inputs{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding:40px;
+
+  width: 400px;
+}
+
+input{
+  margin:40px;
 }
