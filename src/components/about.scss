@@ -18,15 +18,30 @@ body{
   line-height:30px;
 }
 .flex-item {
-  background: tomato;
-  margin: 5px;
+  background: #3e6368;
+  margin: 50px;
   color: white;
   font-weight: bold;
-  font-size: 1.5em;
+  font-size: 2em;
   text-align: center;
   flex: 1 0 auto;
-  height:auto;
+  height:1000px;
+  width:800px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
 }
+
+.content-about{
+  font-size: 1em;
+  color:lightslategrey;
+  font-weight: lighter;
+
+  padding: 30px 100px 1000px;
+}
+
 .flex-item:before {
   content:'';
   float:left;

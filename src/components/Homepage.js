@@ -10,6 +10,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LogoutIcon from '@mui/icons-material/Logout';
 import CheckIcon from '@mui/icons-material/Check';
+import TodayIcon from '@mui/icons-material/Today';
+import PendingIcon from '@mui/icons-material/Pending';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import NavigationBar from "./Navi";
 import { DndProvider } from 'react-dnd';
 import Draggable, {DraggableCore} from "react-draggable"
@@ -39,10 +42,20 @@ export default function Homepage() {
                 onValue(ref(db, `/${auth.currentUser.uid}`), (snapshot) => {
                     setTodos([]);
                     setTodayTodos([]);
+                    setInProgressTodos([]);
+                    setDoneTodos([]);
                     const data = snapshot.val();
                     if (data !== null) {
                         Object.values(data).map((todo) => {
-                            setTodos((oldArray) => [                            ...oldArray,                            {                                todo: todo.todo,                                uidd: todo.uidd,                                deadline: todo.deadline,                                status: todo.status || "do today",                            },                        ]);
+                            setTodos((oldArray) => [
+                                ...oldArray,
+                                {
+                                    todo: todo.todo,
+                                    uidd: todo.uidd,
+                                    deadline: todo.deadline,
+                                    status: todo.status || "do today",
+                                },
+                            ]);
                             if (todo.status === "do today") {
                                 setTodayTodos((prevTodayTodos) =>
                                     prevTodayTodos.concat({
@@ -54,8 +67,18 @@ export default function Homepage() {
                                 );
                             }
                             if (todo.status === "in progress") {
-                                setTodayTodos((prevTodayTodos) =>
-                                    prevTodayTodos.concat({
+                                setInProgressTodos((prevInProgressTodos) =>
+                                    prevInProgressTodos.concat({
+                                        todo: todo.todo,
+                                        uidd: todo.uidd,
+                                        deadline: todo.deadline,
+                                        status: todo.status,
+                                    })
+                                );
+                            }
+                            if (todo.status === "done") {
+                                setDoneTodos((prevDoneTodos) =>
+                                    prevDoneTodos.concat({
                                         todo: todo.todo,
                                         uidd: todo.uidd,
                                         deadline: todo.deadline,
@@ -71,10 +94,6 @@ export default function Homepage() {
 
         setInitialTodos([]);
     }, []);
-
-
-
-
 
 
     const handleSignOut = () => {
@@ -185,127 +204,117 @@ export default function Homepage() {
 
     return (
         <div className="homepage">
-            {/*<div className="div-of-lists">*/}
-            <section className="inputs">
-                <input
-                    className="add-edit-input"
-                    type="text"
-                    placeholder="Add todo..."
-                    value={todo}
-                    onChange={(e) => setTodo(e.target.value)}
-                />
-                <input
-                    className="add-input-date"
-                    type="date"
-                    value={deadline}
-                    onChange={(e) => setDeadline(e.target.value)}
-                />
-            </section>
-            <div className="general-list">
-                <DndProvider backend={HTML5Backend}>
-                    <NavigationBar/>
+            <section className="content">
+                <section className="inputs"> Add your task
+                    <input
+                        className="add-edit-input"
+                        type="text"
+                        placeholder="Add todo..."
+                        value={todo}
+                        onChange={(e) => setTodo(e.target.value)}
+                    />
+                    <input
+                        className="add-input-date"
+                        type="date"
+                        value={deadline}
+                        onChange={(e) => setDeadline(e.target.value)}
+                    />
+                </section>
 
+                <section className="all-lists">
+                    <div className="general-list">
+                        <DndProvider backend={HTML5Backend}>
+                            <NavigationBar/>
 
-
-                    {todos.map((todo, index) => (
-                        <div className="todo" key={todo.uidd}>
-                            <div className="todo-name">
-                                <h1>{todo.todo}</h1>
-                                <span>{todo.deadline}</span>
-
-                            </div>
-                            <div className="todo-actions">
-                                <EditIcon
-                                    fontSize="large"
-                                    onClick={() => handleUpdate(todo)}
-                                    className="edit-button"
-                                />
-                                <DeleteIcon
-                                    fontSize="large"
-                                    onClick={() => handleDelete(todo.uidd)}
-                                    className="delete-button"
-                                />
-                                <button
-                                    className="move-to-today-button"
-                                    onClick={() => handleMoveToToday(todo)}
-                                >
-                                    Do Today
-                                </button>
-
-                                <button
-                                    className="move-to-in progress-button"
-                                    onClick={() => handleMoveToInProgress(todo)}
-                                >
-                                    In progress
-                                </button>
-                                <button
-                                    className="move-to-done-button"
-                                    onClick={() => handleMoveToDone(todo)}
-                                >
-                                    Done
-                                </button>
-                            </div>
-                        </div>
-                    ))}
-
-                    {isEdit ? (
-                        <div>
-                            <CheckIcon onClick={handleEditConfirm} className="add-confirm-icon"/>
-                        </div>
-                    ) : (
-                        <div>
-                            <AddIcon onClick={writeToDatabase} className="add-confirm-icon" />
-                        </div>
-                    )}
-                    <LogoutIcon onClick={handleSignOut} className="logout-icon" />
-                </DndProvider>
-                <DndProvider droppableId="todos">
-                    {(provided) => (
-                        <div {...provided.droppableProps} ref={provided.innerRef}>
-                            {/* wyświetlanie elementów */}
                             {todos.map((todo, index) => (
-                                <Draggable key={todo.uidd} draggableId={todo.uidd} index={index}>
-                                    {(provided) => (
-                                        <div
-                                            {...provided.draggableProps}
-                                            {...provided.dragHandleProps}
-                                            ref={provided.innerRef}
-                                            className="todo"
-                                        >
-                                            {/* treść elementu */}
-                                        </div>
-                                    )}
-                                </Draggable>
-                            ))}
-                            {provided.placeholder}
-                        </div>
-                    )}
-                </DndProvider>
+                                <div className="todo" key={todo.uidd}>
+                                    <div className="todo-name">
+                                        <h1>{todo.todo}</h1>
+                                        <span>{todo.deadline}</span>
 
-            </div>
-            <section className="all-lists">
-                <div className="todaylist">
-                    <div className="today-todos">
-                        <h1>Do Today</h1>
-                        {todayTodos.map((todo) => (
-                            <div className="todo" key={todo.uidd}>
-                                <h1>{todo.todo}</h1>
-                                <DeleteIcon
-                                    fontSize="large"
-                                    onClick={() => handleDelete(todo.uidd)}
-                                    className="delete-button"
-                                />
-                            </div>
-                        ))}
+                                    </div>
+                                    <div className="todo-actions">
+                                        <EditIcon
+                                            fontSize="large"
+                                            onClick={() => handleUpdate(todo)}
+                                            className="edit-button"
+                                        />
+                                        <DeleteIcon
+                                            fontSize="large"
+                                            onClick={() => handleDelete(todo.uidd)}
+                                            className="delete-button"
+                                        />
+                                        <TodayIcon
+                                            className="move-to-today-button"
+                                            onClick={() => handleMoveToToday(todo)}
+                                        >
+                                            Do Today
+                                        </TodayIcon>
+
+                                        <PendingIcon
+                                            className="move-to-in-progress-button"
+                                            onClick={() => handleMoveToInProgress(todo)}
+                                        >
+                                            In progress
+                                        </PendingIcon>
+                                        <TaskAltIcon
+                                            className="move-to-done-button"
+                                            onClick={() => handleMoveToDone(todo)}
+                                        >
+                                            Done
+                                        </TaskAltIcon>
+                                    </div>
+                                </div>
+                            ))}
+
+                            {isEdit ? (
+                                <div>
+                                    <CheckIcon onClick={handleEditConfirm} className="add-confirm-icon" />
+                                </div>
+                            ) : (
+                                <div>
+                                    <AddIcon onClick={writeToDatabase} className="add-confirm-icon" />
+                                </div>
+                            )}
+                            <LogoutIcon onClick={handleSignOut} className="logout-icon" />
+                        </DndProvider>
+
+
                     </div>
-                </div>
-                <div className="inprogress-todos">
-                    <h1>In Progress</h1>
-                </div>
-                <div className="done-todos">
-                    <h1>Done</h1>
-                </div>
+                    <div className="todaylist">
+                        <div className="today-todos">
+                            <h1 className="column-title">Do Today <TodayIcon> </TodayIcon></h1>
+                            {todayTodos.map((todo) => (
+                                <div className="todo" key={todo.uidd}>
+                                    <h1>{todo.todo}</h1>
+                                    <DeleteIcon
+                                        fontSize="large"
+                                        onClick={() => handleDelete(todo.uidd)}
+                                        className="delete-button"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="inprogress-todos">
+                        <h1 className="column-title">In Progress <PendingIcon> </PendingIcon></h1>
+                        <DeleteIcon
+                            fontSize="large"
+                            onClick={() => handleDelete(todo.uidd)}
+                            className="delete-button"
+                        />
+                    </div>
+                    <div className="done-todos">
+                        <h1 className="column-title">Done <TaskAltIcon/> </h1>
+                        <DeleteIcon
+                            fontSize="large"
+                            onClick={() => handleDelete(todo.uidd)}
+                            className="delete-button"
+                        />
+                    </div>
+                </section>
             </section>
+
         </div>
 
         // </div>

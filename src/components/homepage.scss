@@ -9,13 +9,20 @@
   position: relative;
   flex-wrap: nowrap;
 }
+.content{
+  display: flex;
+
+  justify-content: space-between;
+  flex-direction: row;
+}
 
 .all-lists{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width:40vw;
-  padding:100px;
+  //width:40vw;
+  margin-left:550px;
+  margin-top:190px
 }
 
 //.div-of-lists{
@@ -39,30 +46,67 @@
 
 .add-confirm-icon {
   position: absolute;
-  transform: scale(2);
-  top: 205px;
-  right: 1250px;
+  transform: scale(4);
+  top: 350px;
+  right: 1750px;
   cursor: pointer;
+  color: white;
+
 }
 
-.todo {
+.today-todos, .general-list, .inprogress-todos, .done-todos {
   display: flex;
   align-items: center;
+  justify-content: start;
+  flex-direction: column;
+  background-color: #3e6368;
+  border-radius: 10px;
+  margin: 100px 20px 20px 10px;
+  min-height: 900px;
+  width: 300px
+
+}
+
+
+.todo{
+  background-color: #c17789;
+  margin: 20px 0 20px 0;
+  border-radius: 10px;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  flex-direction: row;
-  margin-bottom: 10px;
+  padding: 10px 5px 10px 5px;
+  max-width:200px;
+  text-align: center;
+}
+
+.column-title{
+  color:white
 }
 
 .todo > h1 {
   width: 500px;
-  background-color: rgb(211, 211, 211);
   padding: 5px 10px;
+  max-width:180px;
+  background-color: #c17789;
+  text-align: center;
 }
 
 .edit-button,
-.delete-button {
+.delete-button,
+.move-to-in-progress-button,
+.move-to-today-button,
+.move-to-done-button {
   cursor: pointer;
   margin-left: 10px;
+}
+
+.move-to-in-progress-button,
+.move-to-today-button,
+.move-to-done-button {
+  transform: scale(1.2);
+  padding-bottom: 5px;
 }
 
 .logout-icon {
@@ -77,10 +121,48 @@
 }
 
 .inputs {
+  position: absolute;
+  z-index: 1;
+  top: 400px;
+  left: 25px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
+  background-color: #d68189;
+  border-radius: 10px;
+  min-height: 300px;
+  width: 500px;
+  padding: 50px 5px 5px 10px;
+  font-family: "Changa One";
+  font-weight: normal;
+  color: white;
+  font-size: 2em;
 
 }
+
+.add-edit-input{
+  min-height:100px;
+  flex-wrap: wrap;
+  width: 70%;
+  padding: 10px;
+  display: block;
+  box-sizing: border-box;
+  overflow: auto;
+  resize: vertical;
+  word-wrap: break-word;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.add-input-date{
+  height: 50px;
+  width: 70%;
+  border-radius: 10px;
+  border-color: white;
+  font-size: 1em;
+  margin-bottom: 150px;
+  margin-top: 50px
+}
+
+
