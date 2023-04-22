@@ -3,7 +3,7 @@ import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../firebase.js";
 import { useNavigate } from "react-router-dom";
 import { uid } from "uid";
-import { set, ref, onValue, remove, update } from "firebase/database";
+import { set, ref, onValue, remove, update, onChildChanged  } from "firebase/database";
 import "./homepage.scss";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -25,27 +25,57 @@ export default function Homepage() {
     const [tempUidd, setTempUidd] = useState("");
     const navigate = useNavigate();
     const [todayTodos, setTodayTodos] = useState([]);
+    const [inProgressTodos, setInProgressTodos] = useState([]);
+    const [doneTodos, setDoneTodos] = useState([]);
     const [deadline, setDeadline] = useState("Deadline date hasn't confirmed");
+    const [initialTodos, setInitialTodos] = useState([]);
+
 
 
     useEffect(() => {
         auth.onAuthStateChanged((user) => {
             if (user) {
-                // read
+                // read initial data
                 onValue(ref(db, `/${auth.currentUser.uid}`), (snapshot) => {
                     setTodos([]);
+                    setTodayTodos([]);
                     const data = snapshot.val();
                     if (data !== null) {
                         Object.values(data).map((todo) => {
-                            setTodos((oldArray) => [...oldArray, { todo: todo.todo, uidd: todo.uidd, deadline: todo.deadline }]);
+                            setTodos((oldArray) => [                            ...oldArray,                            {                                todo: todo.todo,                                uidd: todo.uidd,                                deadline: todo.deadline,                                status: todo.status || "do today",                            },                        ]);
+                            if (todo.status === "do today") {
+                                setTodayTodos((prevTodayTodos) =>
+                                    prevTodayTodos.concat({
+                                        todo: todo.todo,
+                                        uidd: todo.uidd,
+                                        deadline: todo.deadline,
+                                        status: todo.status,
+                                    })
+                                );
+                            }
+                            if (todo.status === "in progress") {
+                                setTodayTodos((prevTodayTodos) =>
+                                    prevTodayTodos.concat({
+                                        todo: todo.todo,
+                                        uidd: todo.uidd,
+                                        deadline: todo.deadline,
+                                        status: todo.status,
+                                    })
+                                );
+                            }
                         });
                     }
                 });
-            } else if (!user) {
-                navigate("/");
             }
         });
+
+        setInitialTodos([]);
     }, []);
+
+
+
+
+
 
     const handleSignOut = () => {
         signOut(auth)
@@ -106,12 +136,50 @@ export default function Homepage() {
     };
 
     //move to Do today
+
     const handleMoveToToday = (todo) => {
-        setTodos((prevTodos) =>
-            prevTodos.filter((item) => item.uidd !== todo.uidd)
-        );
-        setTodayTodos((prevTodayTodos) => prevTodayTodos.concat(todo));
+        const updatedTodo = { ...todo, status: "do today" };
+        setTodos((prevTodos) => prevTodos.filter((item) => item.uidd !== todo.uidd));
+        setTodayTodos((prevTodayTodos) => prevTodayTodos.concat(updatedTodo));
+        updateTaskStatusInFirebase(todo.uidd, "do today");
     };
+
+    const handleMoveToInProgress = (todo) => {
+        const updatedTodo = { ...todo, status: "in progress" };
+        setTodos((prevTodos) => prevTodos.filter((item) => item.uidd !== todo.uidd));
+        setInProgressTodos((prevInProgressTodos) => prevInProgressTodos.concat(updatedTodo));
+        updateTaskStatusInFirebase(todo.uidd, "in_progress");
+    };
+
+    const handleMoveToDone = (todo) => {
+        const updatedTodo = { ...todo, status: "done" };
+        setTodos((prevTodos) =>
+            prevTodos.map((item) =>
+                item.uidd === todo.uidd ? updatedTodo : item
+            )
+        );
+        setDoneTodos((prevDoneTodos) =>
+            prevDoneTodos.concat(updatedTodo)
+        );
+        if (todo.status === "do today") {
+            setTodayTodos((prevTodayTodos) =>
+                prevTodayTodos.filter((item) => item.uidd !== todo.uidd)
+            );
+        } else if (todo.status === "in progress") {
+            setInProgressTodos((prevInProgressTodos) =>
+                prevInProgressTodos.filter((item) => item.uidd !== todo.uidd)
+            );
+        }
+        updateTaskStatusInFirebase(todo.uidd, "done");
+    };
+
+    const updateTaskStatusInFirebase = (uidd, status) => {
+                update(ref(db, `/${auth.currentUser.uid}/${uidd}`), {
+                    status: status
+                });
+            };
+
+
 
 
 
@@ -162,6 +230,19 @@ export default function Homepage() {
                                     onClick={() => handleMoveToToday(todo)}
                                 >
                                     Do Today
+                                </button>
+
+                                <button
+                                    className="move-to-in progress-button"
+                                    onClick={() => handleMoveToInProgress(todo)}
+                                >
+                                    In progress
+                                </button>
+                                <button
+                                    className="move-to-done-button"
+                                    onClick={() => handleMoveToDone(todo)}
+                                >
+                                    Done
                                 </button>
                             </div>
                         </div>
