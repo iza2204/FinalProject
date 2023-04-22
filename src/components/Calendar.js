@@ -1,15 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./calendar.scss";
 import NavigationBar from "./Navi";
 import LogoutIcon from "@mui/icons-material/Logout";
-import {signOut} from "firebase/auth";
-import {auth} from "../firebase";
-import {useNavigate} from "react-router-dom";
-
-
-
+import { signOut } from "firebase/auth";
+import { auth, db } from "../firebase";
+import { useNavigate } from "react-router-dom";
+import { set, ref, onValue, remove, update } from "firebase/database";
+import Homepage from "./Homepage";
 
 function Calendarsheet() {
     const allMonthValues = [
@@ -43,6 +42,8 @@ function Calendarsheet() {
     // State for text above calander
     const [calendarText, setCalendarText] = useState(`No Date is selected`);
 
+    // State for todos on selected date
+    const [todayTodos, setTodayTodos] = useState([]);
 
     // Function to update selected date and calander text
     const handleDateChange = (value) => {
@@ -62,36 +63,45 @@ function Calendarsheet() {
         setCalendarText(`${monthValue} Month  is selected`);
     };
 
+    useEffect(() => {
+        const selectedDateStr = selectedDate?.toLocaleDateString();
+        if (selectedDateStr) {
+            const todayTodos = [];
+            onValue(ref(db, `/${auth.currentUser.uid}`), (snapshot) => {
+                const data = snapshot.val();
+                if (data !== null) {
+                    Object.values(data).map((todo) => {
+                        if (todo.date === selectedDateStr) {
+                            todayTodos.push({ todo: todo.todo, uidd: todo.uidd, date: todo.date });
+                        }
+                    });
+                }
+                setTodayTodos(todayTodos);
+            });
+        } else {
+            setTodayTodos([]);
+        }
+    }, [selectedDate]);
+
     return (
         <div>
             <NavigationBar />
             <div className="app-calendar">
-                <h2 className="calendar-details">{calendarText}
+                <h2 className="calendar-details">
+                    {calendarText}
                     <div>
-                        Informacje o ilosci zadan
-                        <li>
-
-                        </li>
-                        <li>
-
-                        </li><li>
-
-                    </li><li>
-
-                    </li>
-
-
-
+                        <h3>Tasks for Today:</h3>
+                        <ul>
+                            {todayTodos.map((todo) => (
+                                <li key={todo.uidd}>
+                                    {todo.todo} ({todo.date})
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 </h2>
 
-                <Calendar
-                    onClickMonth={handleMonthChange}
-                    onClickYear={handleYearChange}
-                    onChange={handleDateChange}
-                    value={selectedDate}
-                />
-
+                <Calendar onClickMonth={handleMonthChange} onClickYear={handleYearChange} onChange={handleDateChange} value={selectedDate} />
             </div>
             <LogoutIcon onClick={handleSignOut} className="logout-icon" />
         </div>

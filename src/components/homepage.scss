@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
+  flex-direction: row;
   position: relative;
   flex-wrap: nowrap;
 }
@@ -76,16 +76,11 @@
 
 }
 
-.inputs{
+.inputs {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding:40px;
 
-  width: 400px;
-}
 
-input{
-  margin:40px;
 }

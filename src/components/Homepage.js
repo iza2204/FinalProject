@@ -25,8 +25,7 @@ export default function Homepage() {
     const [tempUidd, setTempUidd] = useState("");
     const navigate = useNavigate();
     const [todayTodos, setTodayTodos] = useState([]);
-    const [deadline, setDeadline] = useState("");
-
+    const [deadline, setDeadline] = useState("Deadline date hasn't confirmed");
 
 
     useEffect(() => {
@@ -38,7 +37,7 @@ export default function Homepage() {
                     const data = snapshot.val();
                     if (data !== null) {
                         Object.values(data).map((todo) => {
-                            setTodos((oldArray) => [...oldArray, { todo: todo.todo, uidd: todo.uidd }]);
+                            setTodos((oldArray) => [...oldArray, { todo: todo.todo, uidd: todo.uidd, deadline: todo.deadline }]);
                         });
                     }
                 });
@@ -64,9 +63,8 @@ export default function Homepage() {
         set(ref(db, `/${auth.currentUser.uid}/${uidd}`), {
             todo: todo,
             uidd: uidd,
-            deadline: deadline
+            deadline: deadline || "Deadline date hasn't confirmed",
         });
-
 
         setTodo("");
         setDeadline("");
@@ -83,7 +81,7 @@ export default function Homepage() {
         update(ref(db, `/${auth.currentUser.uid}/${tempUidd}`), {
             todo: todo,
             uidd: tempUidd,
-            deadline: deadline
+            deadline: deadline || "Deadline date hasn't confirmed"
         });
 
         setTodo("");
@@ -120,114 +118,114 @@ export default function Homepage() {
     return (
         <div className="homepage">
             {/*<div className="div-of-lists">*/}
-                <section className="inputs">
-                    <input
-                        className="add-edit-input"
-                        type="text"
-                        placeholder="Add todo..."
-                        value={todo}
-                        onChange={(e) => setTodo(e.target.value)}
-                    />
-                    <input
-                        className="add-input-date"
-                        type="date"
-                        value={deadline}
-                        onChange={(e) => setDeadline(e.target.value)}
-                    />
-                </section>
-                <div className="general-list">
-                    <DndProvider backend={HTML5Backend}>
-                        <NavigationBar/>
+            <section className="inputs">
+                <input
+                    className="add-edit-input"
+                    type="text"
+                    placeholder="Add todo..."
+                    value={todo}
+                    onChange={(e) => setTodo(e.target.value)}
+                />
+                <input
+                    className="add-input-date"
+                    type="date"
+                    value={deadline}
+                    onChange={(e) => setDeadline(e.target.value)}
+                />
+            </section>
+            <div className="general-list">
+                <DndProvider backend={HTML5Backend}>
+                    <NavigationBar/>
 
 
 
-                        {todos.map((todo, index) => (
+                    {todos.map((todo, index) => (
+                        <div className="todo" key={todo.uidd}>
+                            <div className="todo-name">
+                                <h1>{todo.todo}</h1>
+                                <span>{todo.deadline}</span>
+
+                            </div>
+                            <div className="todo-actions">
+                                <EditIcon
+                                    fontSize="large"
+                                    onClick={() => handleUpdate(todo)}
+                                    className="edit-button"
+                                />
+                                <DeleteIcon
+                                    fontSize="large"
+                                    onClick={() => handleDelete(todo.uidd)}
+                                    className="delete-button"
+                                />
+                                <button
+                                    className="move-to-today-button"
+                                    onClick={() => handleMoveToToday(todo)}
+                                >
+                                    Do Today
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+
+                    {isEdit ? (
+                        <div>
+                            <CheckIcon onClick={handleEditConfirm} className="add-confirm-icon"/>
+                        </div>
+                    ) : (
+                        <div>
+                            <AddIcon onClick={writeToDatabase} className="add-confirm-icon" />
+                        </div>
+                    )}
+                    <LogoutIcon onClick={handleSignOut} className="logout-icon" />
+                </DndProvider>
+                <DndProvider droppableId="todos">
+                    {(provided) => (
+                        <div {...provided.droppableProps} ref={provided.innerRef}>
+                            {/* wyświetlanie elementów */}
+                            {todos.map((todo, index) => (
+                                <Draggable key={todo.uidd} draggableId={todo.uidd} index={index}>
+                                    {(provided) => (
+                                        <div
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            ref={provided.innerRef}
+                                            className="todo"
+                                        >
+                                            {/* treść elementu */}
+                                        </div>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </div>
+                    )}
+                </DndProvider>
+
+            </div>
+            <section className="all-lists">
+                <div className="todaylist">
+                    <div className="today-todos">
+                        <h1>Do Today</h1>
+                        {todayTodos.map((todo) => (
                             <div className="todo" key={todo.uidd}>
-                                <div className="todo-name">
-                                    <h1>{todo.todo}</h1>
-                                    <span>{new Date(deadline).toLocaleDateString()}</span>
-
-                                </div>
-                                <div className="todo-actions">
-                                    <EditIcon
-                                        fontSize="large"
-                                        onClick={() => handleUpdate(todo)}
-                                        className="edit-button"
-                                    />
-                                    <DeleteIcon
-                                        fontSize="large"
-                                        onClick={() => handleDelete(todo.uidd)}
-                                        className="delete-button"
-                                    />
-                                    <button
-                                        className="move-to-today-button"
-                                        onClick={() => handleMoveToToday(todo)}
-                                    >
-                                        Do Today
-                                    </button>
-                                </div>
+                                <h1>{todo.todo}</h1>
+                                <DeleteIcon
+                                    fontSize="large"
+                                    onClick={() => handleDelete(todo.uidd)}
+                                    className="delete-button"
+                                />
                             </div>
                         ))}
-
-                        {isEdit ? (
-                            <div>
-                                <CheckIcon onClick={handleEditConfirm} className="add-confirm-icon"/>
-                            </div>
-                        ) : (
-                            <div>
-                                <AddIcon onClick={writeToDatabase} className="add-confirm-icon" />
-                            </div>
-                        )}
-                        <LogoutIcon onClick={handleSignOut} className="logout-icon" />
-                    </DndProvider>
-                    <DndProvider droppableId="todos">
-                        {(provided) => (
-                            <div {...provided.droppableProps} ref={provided.innerRef}>
-                                {/* wyświetlanie elementów */}
-                                {todos.map((todo, index) => (
-                                    <Draggable key={todo.uidd} draggableId={todo.uidd} index={index}>
-                                        {(provided) => (
-                                            <div
-                                                {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
-                                                ref={provided.innerRef}
-                                                className="todo"
-                                            >
-                                                {/* treść elementu */}
-                                            </div>
-                                        )}
-                                    </Draggable>
-                                ))}
-                                {provided.placeholder}
-                            </div>
-                        )}
-                    </DndProvider>
-
+                    </div>
                 </div>
-                <section className="all-lists">
-                    <div className="todaylist">
-                        <div className="today-todos">
-                            <h1>Do Today</h1>
-                            {todayTodos.map((todo) => (
-                                <div className="todo" key={todo.uidd}>
-                                    <h1>{todo.todo}</h1>
-                                    <DeleteIcon
-                                        fontSize="large"
-                                        onClick={() => handleDelete(todo.uidd)}
-                                        className="delete-button"
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="inprogress-todos">
-                        <h1>In Progress</h1>
-                    </div>
-                    <div className="done-todos">
-                        <h1>Done</h1>
-                    </div>
-                </section>
-            </div>
+                <div className="inprogress-todos">
+                    <h1>In Progress</h1>
+                </div>
+                <div className="done-todos">
+                    <h1>Done</h1>
+                </div>
+            </section>
+        </div>
 
         // </div>
 
